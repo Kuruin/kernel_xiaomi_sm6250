@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 /* Copyright (c) 2017-2020 The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2017-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
+>>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -990,6 +995,10 @@ static int smb1390_ilim_vote_cb(struct votable *votable, void *data,
 						ilim_uA, slave_enabled);
 		vote(chip->disable_votable, ILIM_VOTER, false, 0);
 	}
+
+	/* Notify userspace ILIM changed */
+	 if (chip->cp_master_psy)
+		 power_supply_changed(chip->cp_master_psy);
 
 	return rc;
 }
