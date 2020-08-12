@@ -132,8 +132,8 @@ static ssize_t power_supply_show_property(struct device *dev,
 			value.arrayval[8], value.arrayval[9], value.arrayval[10], value.arrayval[11],
 			value.arrayval[12], value.arrayval[13], value.arrayval[14], value.arrayval[15]);
 
-	dev_err(dev, "reporting property %s %d\n",
-		attr->attr.name, value.intval);
+	dev_err(dev, "reporting property %s %d %d\n",
+		attr->attr.name, off, value.intval);
 
 	if (off == POWER_SUPPLY_PROP_ROMID ||
 			off == POWER_SUPPLY_PROP_STATUS)
