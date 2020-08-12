@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and

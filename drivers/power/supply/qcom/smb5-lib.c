@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1286,9 +1282,6 @@ static int smblib_request_dpdm(struct smb_charger *chg, bool enable)
 	return rc;
 }
 
-<<<<<<< HEAD
-void smblib_rerun_apsd(struct smb_charger *chg)
-=======
 #define PERIPHERAL_MASK		0xFF
 static u16 peripheral_base;
 static char log[256] = "";
@@ -1367,8 +1360,7 @@ static void dump_regs(struct smb_charger *chg)
 	dump_reg(chg, TYPEC_BASE + addr, NULL);
 }
 
-static void smblib_rerun_apsd(struct smb_charger *chg)
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
+void smblib_rerun_apsd(struct smb_charger *chg)
 {
 	int rc;
 
@@ -1386,13 +1378,10 @@ static const struct apsd_result *smblib_update_usb_type(struct smb_charger *chg)
 
 	/* if PD is active, APSD is disabled so won't have a valid result */
 	if (chg->pd_active) {
+		chg->usb_psy_desc.type = POWER_SUPPLY_TYPE_USB_PD;
 		chg->real_charger_type = POWER_SUPPLY_TYPE_USB_PD;
-<<<<<<< HEAD
 	} else if (chg->qc3p5_detected) {
 		chg->real_charger_type = POWER_SUPPLY_TYPE_USB_HVDCP_3P5;
-=======
-		chg->usb_psy_desc.type = POWER_SUPPLY_TYPE_USB_PD;
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	} else {
 		/*
 		 * Update real charger type only if its not FLOAT
@@ -3265,15 +3254,8 @@ static void smblib_hvdcp_adaptive_voltage_change(struct smb_charger *chg)
 		vote(chg->usb_icl_votable, HVDCP2_ICL_VOTER, false, 0);
 	}
 
-<<<<<<< HEAD
 	if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3
 		|| chg->real_charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
-=======
-	if ((chg->real_charger_type ==
-				POWER_SUPPLY_TYPE_USB_HVDCP_3)
-			|| (chg->real_charger_type ==
-				POWER_SUPPLY_TYPE_USB_HVDCP_3P5)) {
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		rc = smblib_hvdcp3_set_fsw(chg);
 		if (rc < 0)
 			smblib_err(chg, "Couldn't set QC3.0 Fsw rc=%d\n", rc);
@@ -6777,18 +6759,47 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 	/* the APSD done handler will set the USB supply type */
 	apsd_result = smblib_get_apsd_result(chg);
 
-<<<<<<< HEAD
-	if (apsd_result->bit & QC_3P0_BIT) {
+	if ((apsd_result->bit & QC_3P0_BIT)
+			|| (apsd_result->pst
+				== POWER_SUPPLY_TYPE_USB_HVDCP_3P5)) {
 		/* for QC3, switch to CP if present */
 		if (chg->sec_cp_present) {
-			rc = smblib_select_sec_charger(chg,
-				POWER_SUPPLY_CHARGER_SEC_CP,
-				POWER_SUPPLY_CP_HVDCP3, false);
-			if (rc < 0)
-				dev_err(chg->dev,
-				"Couldn't enable secondary chargers  rc=%d\n",
-					rc);
-		}
+			if (apsd_result->pst
+					== POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
+				rc = smblib_select_sec_charger(chg,
+						POWER_SUPPLY_CHARGER_SEC_CP,
+						POWER_SUPPLY_CP_HVDCP3P5, false);
+				if (rc < 0)
+					dev_err(chg->dev,
+							"HVDCP3P5: Couldn't enable secondary chargers  rc=%d\n", rc);
+				if (chg->support_ffc && (rc >= 0)) {
+					if( !smblib_get_fastcharge_mode(chg) )
+						smblib_set_fastcharge_mode(chg, true);
+				}
+				smblib_usb_pd_adapter_allowance_override(chg, CONTINUOUS);
+			} else if (!chg->qc_class_ab) {
+				rc = smblib_select_sec_charger(chg, POWER_SUPPLY_CHARGER_SEC_CP,
+							POWER_SUPPLY_CP_HVDCP3, false);
+				if (rc < 0)
+					dev_err(chg->dev,
+						"HVDCP3: Couldn't enable secondary chargers  rc=%d\n", rc);
+			} else {
+				if (!chg->detect_low_power_qc3_charger) {
+					vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
+							HVDCP_START_CURRENT_UA);
+					schedule_delayed_work(&chg->raise_qc3_vbus_work, 0);
+					chg->detect_low_power_qc3_charger = true;
+				}
+			}
+			/* start six pin battery step charge monitor work */
+			if (chg->six_pin_step_charge_enable) {
+				if (!chg->already_start_step_charge_work) {
+					schedule_delayed_work(&chg->six_pin_batt_step_chg_work,
+							msecs_to_jiffies(STEP_CHG_DELAYED_START_MS));
+					chg->already_start_step_charge_work = true;
+				}
+			}
+		} 
 
 		/* QC3.5 detection timeout */
 		if (!chg->apsd_ext_timeout &&
@@ -6801,47 +6812,6 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 				msecs_to_jiffies(APSD_EXTENDED_TIMEOUT_MS)
 				+ jiffies);
 		}
-=======
-	/* for QC3, switch to CP if present */
-	if (((apsd_result->bit & QC_3P0_BIT)
-			|| (apsd_result->pst
-				== POWER_SUPPLY_TYPE_USB_HVDCP_3P5))
-			&& chg->sec_cp_present) {
-		if (apsd_result->pst
-				== POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
-			rc = smblib_select_sec_charger(chg,
-					POWER_SUPPLY_CHARGER_SEC_CP,
-					POWER_SUPPLY_CP_HVDCP3P5, false);
-			if (rc < 0)
-				dev_err(chg->dev,
-						"HVDCP3P5: Couldn't enable secondary chargers  rc=%d\n", rc);
-			if (chg->support_ffc && (rc >= 0)) {
-				if( !smblib_get_fastcharge_mode(chg) )
-					smblib_set_fastcharge_mode(chg, true);
-			}
-			smblib_usb_pd_adapter_allowance_override(chg, CONTINUOUS);
-		} else if (!chg->qc_class_ab) {
-			rc = smblib_select_sec_charger(chg, POWER_SUPPLY_CHARGER_SEC_CP,
-						POWER_SUPPLY_CP_HVDCP3, false);
-			if (rc < 0)
-				dev_err(chg->dev,
-					"HVDCP3: Couldn't enable secondary chargers  rc=%d\n", rc);
-		} else {
-			if (!chg->detect_low_power_qc3_charger) {
-				vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
-						HVDCP_START_CURRENT_UA);
-				schedule_delayed_work(&chg->raise_qc3_vbus_work, 0);
-				chg->detect_low_power_qc3_charger = true;
-			}
-		}
-		/* start six pin battery step charge monitor work */
-		if (chg->six_pin_step_charge_enable) {
-			if (!chg->already_start_step_charge_work) {
-				schedule_delayed_work(&chg->six_pin_batt_step_chg_work,
-						msecs_to_jiffies(STEP_CHG_DELAYED_START_MS));
-				chg->already_start_step_charge_work = true;
-			}
-		}
 	} else if ((apsd_result->bit & QC_2P0_BIT)
 			&& (!chg->qc2_unsupported)) {
 		pr_info("force 9V for QC2 charger\n");
@@ -6850,7 +6820,6 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 			pr_err("Failed to force 9V\n");
 		vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
 				HVDCP2_CURRENT_UA);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	}
 
 	smblib_dbg(chg, PR_OEM, "IRQ: hvdcp-3p0-auth-done rising; %s detected\n",
@@ -7461,11 +7430,6 @@ static void typec_src_removal(struct smb_charger *chg)
 	}
 
 	chg->typec_legacy = false;
-<<<<<<< HEAD
-
-	del_timer_sync(&chg->apsd_timer);
-	chg->apsd_ext_timeout = false;
-=======
 	chg->detect_low_power_qc3_charger = false;
 	chg->raise_vbus_to_detect = false;
 	chg->is_qc_class_a = false;
@@ -7481,7 +7445,9 @@ static void typec_src_removal(struct smb_charger *chg)
 			smblib_set_fastcharge_mode(chg, false);
 		}
 	}
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
+
+	del_timer_sync(&chg->apsd_timer);
+	chg->apsd_ext_timeout = false;
 }
 
 static void typec_mode_unattached(struct smb_charger *chg)

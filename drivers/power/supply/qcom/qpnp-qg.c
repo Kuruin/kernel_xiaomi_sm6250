@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -3352,21 +3348,19 @@ static int qg_load_battery_profile(struct qpnp_qg *chip)
 		chip->bp.fastchg_curr_ma = -EINVAL;
 	}
 
-<<<<<<< HEAD
-	/*
-	 * Update the max fcc values based on QG subtype including
-	 * error margins.
-	 */
-	chip->bp.fastchg_curr_ma = min(chip->max_fcc_limit_ma,
-					chip->bp.fastchg_curr_ma);
-=======
 	rc = of_property_read_u32(profile_node, "qcom,nom-batt-capacity-mah",
 							&chip->bp.nom_cap_uah);
 	if (rc < 0) {
 		pr_err("battery nominal capacity unavailable, rc:%d\n", rc);
 		chip->bp.nom_cap_uah = -EINVAL;
 	}
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
+
+	/*
+	 * Update the max fcc values based on QG subtype including
+	 * error margins.
+	 */
+	chip->bp.fastchg_curr_ma = min(chip->max_fcc_limit_ma,
+					chip->bp.fastchg_curr_ma);
 
 	rc = of_property_read_u32(profile_node, "qcom,qg-batt-profile-ver",
 				&chip->bp.qg_profile_version);

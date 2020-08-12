@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -491,10 +487,9 @@ struct usbpd {
 	bool		has_dp;
 	u16			ss_lane_svid;
 
-<<<<<<< HEAD
 	u32			limit_curr;
 	u32			pd_max_curr_limit;
-=======
+
 	/*for xiaomi verifed pd adapter*/
 	u32			adapter_id;
 	u32			adapter_svid;
@@ -503,7 +498,6 @@ struct usbpd {
 	bool			verifed;
 	int			uvdm_state;
 	bool			pps_weak_limit;
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 
 	/* ext msg support */
 	bool			send_get_src_cap_ext;
@@ -845,25 +839,11 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 		pd->requested_voltage =
 			PD_SRC_PDO_FIXED_VOLTAGE(pdo) * 50 * 1000;
 
-<<<<<<< HEAD
 		if (pd->requested_voltage > PD_VBUS_MAX_VOLTAGE_LIMIT)
 			return -ENOTSUPP;
 
-		if (pd->requested_voltage == PD_VBUS_MAX_VOLTAGE_LIMIT
-				&& curr > MAX_FIXED_PDO_MA)
-=======
-		/* pd request uv will less than pd vbus max 9V for fixed pdos */
-		if (pd->requested_voltage > PD_VBUS_MAX_VOLTAGE_LIMIT)
-			return -ENOTSUPP;
-
-		/*
-		 * set maxium allowed current for fixed pdo to 2A if request
-		 * voltage is 9V, as we should limit charger to 18W for more safety
-		 * both for charger and our device(such as charge ic inductor)
-		 */
 		if (pd->requested_voltage == PD_VBUS_MAX_VOLTAGE_LIMIT
 				&& curr >= MAX_FIXED_PDO_MA)
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 			curr = MAX_FIXED_PDO_MA;
 
 		pd->rdo = PD_RDO_FIXED(pdo_pos, 0, mismatch, 1, 1, curr / 10,
@@ -877,15 +857,6 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 			return -EINVAL;
 		}
 
-<<<<<<< HEAD
-		if (pd->limit_curr && ua > pd->pd_max_curr_limit)
-			ua = pd->pd_max_curr_limit;
-
-		curr = ua / 1000;
-
-		/*
-		 * Workaround for Zimi and similar non-compliant QC4+/PPS chargers:
-=======
 		/* if limit_pd_vbus is enabled, pd request uv will less than pd vbus max */
 		if (pd->limit_curr && ua > pd->pd_max_curr_limit) {
 			ua = pd->pd_max_curr_limit;
@@ -898,7 +869,6 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 		curr = ua / 1000;
 		/*
 		 * workaround for Zimi and similar non-compliant QC4+/PPS chargers:
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		 * if PPS power limit bit is set and QC4+ not compliant PPS chargers,
 		 * hvdcp_opti will set 0mA for these PPS chargers, we treat them as
 		 * maxium 2A PPS chargers to avoid not charging issue.
@@ -907,10 +877,6 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 			ua = MAX_NON_COMPLIANT_PPS_UA;
 			curr = ua / 1000;
 		}
-<<<<<<< HEAD
-
-=======
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		pd->requested_voltage = uv;
 		pd->rdo = PD_RDO_AUGMENTED(pdo_pos, mismatch, 1, 1,
 				uv / 20000, ua / 50000);

@@ -1,5 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2019-2020 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -9,12 +9,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-=======
-// SPDX-License-Identifier: GPL-2.0-only
-/*
- * Copyright (c) 2019 The Linux Foundation. All rights reserved.
- * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  */
 #define DEBUG
 #define pr_fmt(fmt) "SMB1398: %s: " fmt, __func__
@@ -221,11 +215,8 @@
 #define CP_VOTER			"CP_VOTER"
 #define CC_MODE_VOTER			"CC_MODE_VOTER"
 #define MAIN_DISABLE_VOTER		"MAIN_DISABLE_VOTER"
-<<<<<<< HEAD
 #define TAPER_MAIN_ICL_LIMIT_VOTER	"TAPER_MAIN_ICL_LIMIT_VOTER"
-=======
 #define MAIN_FCC_VOTER                  "MAIN_FCC_VOTER"
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 
 /* Constant definitions */
 #define DIV2_MAX_ILIM_UA		5000000
@@ -234,12 +225,9 @@
 
 #define TAPER_STEPPER_UA_DEFAULT	100000
 #define TAPER_STEPPER_UA_IN_CC_MODE	200000
-<<<<<<< HEAD
 #define CC_MODE_TAPER_MAIN_ICL_UA	500000
-=======
 #define TAPER_STEPPER_UA_SIX_PIN	20000
 #define TAPER_IBAT_OFFSET_UA            1300000
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 
 #define MAX_IOUT_UA			6300000
 #define MAX_1S_VOUT_UV			11700000
@@ -321,10 +309,6 @@ struct smb1398_chip {
 	struct votable		*fv_votable;
 	struct votable		*fcc_main_votable;
 	struct votable		*usb_icl_votable;
-<<<<<<< HEAD
-=======
-
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 
 	struct work_struct	status_change_work;
 	struct work_struct	taper_work;
@@ -358,12 +342,9 @@ struct smb1398_chip {
 	bool			switcher_en;
 	bool			slave_en;
 	bool			in_suspend;
-<<<<<<< HEAD
 	bool			disabled;
-=======
 	bool			six_pin_batt;
 	bool			qc3p5_ffc_batt;
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 };
 
 static const struct smb_irq smb_irqs[];
@@ -679,11 +660,7 @@ static int smb1398_get_die_temp(struct smb1398_chip *chip, int *temp)
 		dev_err(chip->dev, "read die_temp_chan failed, rc=%d\n", rc);
 	} else {
 		*temp = die_temp_deciC / 100;
-<<<<<<< HEAD
-		dev_dbg(chip->dev, "die temp %d\n", *temp);
-=======
 		dev_dbg(chip->dev, "get die temp %d\n", *temp);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	}
 
 	return rc;
@@ -1110,13 +1087,8 @@ static int div2_cp_master_set_prop(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CP_ILIM:
 		if (chip->div2_cp_ilim_votable)
-<<<<<<< HEAD
 			vote_override(chip->div2_cp_ilim_votable, CC_MODE_VOTER,
 						(val->intval > 0), val->intval);
-=======
-			vote_override(chip->div2_cp_ilim_votable,
-					CC_MODE_VOTER, (val->intval > 0), val->intval);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		break;
 	default:
 		dev_err(chip->dev, "setprop %d is not supported\n", prop);
@@ -1364,29 +1336,6 @@ static int smb1398_div2_cp_slave_disable_vote_cb(struct votable *votable,
 		return rc;
 	}
 
-<<<<<<< HEAD
-	/* Re-distribute ILIM to Master CP when Slave is disabled */
-	if (disable && (chip->div2_cp_ilim_votable)) {
-		ilim_ua = get_effective_result_locked(
-				chip->div2_cp_ilim_votable);
-
-		ilim_ua = (ilim_ua * DIV2_ILIM_CFG_PCT) / 100;
-
-		if (ilim_ua > DIV2_MAX_ILIM_UA)
-			ilim_ua = DIV2_MAX_ILIM_UA;
-
-		rc = smb1398_set_iin_ma(chip, ilim_ua / 1000);
-		if (rc < 0) {
-			dev_err(chip->dev, "Could't set CP master ilim, rc=%d\n",
-					rc);
-			return rc;
-		}
-		dev_dbg(chip->dev, "slave disabled, restore master CP ilim to %duA\n",
-				ilim_ua);
-	}
-
-=======
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	return rc;
 }
 
@@ -1661,7 +1610,6 @@ static int smb1398_request_interrupts(struct smb1398_chip *chip)
 	return 0;
 }
 
-<<<<<<< HEAD
 #define ILIM_NR			10
 #define ILIM_DR			8
 #define ILIM_FACTOR(ilim)	((ilim * ILIM_NR) / ILIM_DR)
@@ -1696,7 +1644,6 @@ static void smb1398_configure_ilim(struct smb1398_chip *chip, int mode)
 	}
 }
 
-=======
 static int smb1390_get_fastcharge_mode(struct smb1398_chip *chip)
 {
 	union power_supply_propval pval = {0,};
@@ -1719,7 +1666,6 @@ static int smb1390_get_fastcharge_mode(struct smb1398_chip *chip)
 #define VFLOAT_FOR_TAPER_THR_MIN		4450000
 #define VFLOAT_FOR_FCC_THR			4480000
 #define MAX_TAPER_COUNT			2
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 static void smb1398_status_change_work(struct work_struct *work)
 {
 	struct smb1398_chip *chip = container_of(work,
@@ -1807,9 +1753,7 @@ static void smb1398_status_change_work(struct work_struct *work)
 					true, pval.intval);
 	} else {
 		vote(chip->div2_cp_ilim_votable, WIRELESS_VOTER, false, 0);
-<<<<<<< HEAD
 		smb1398_configure_ilim(chip, pval.intval);
-=======
 		/* CC mode for PPS and CV mode for HVDCP3 */
 		if (pval.intval == POWER_SUPPLY_CP_PPS) {
 			rc = power_supply_get_property(chip->usb_psy,
@@ -1830,7 +1774,6 @@ static void smb1398_status_change_work(struct work_struct *work)
 		} else {
 			goto out;
 		}
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	}
 
 	/*
@@ -2013,20 +1956,6 @@ static void smb1398_taper_work(struct work_struct *work)
 			 * If total FCC is less than the minimum ILIM to
 			 * keep CP master and slave online, disable CP.
 			 */
-<<<<<<< HEAD
-			if (fcc_ua < (chip->div2_cp_min_ilim_ua * 2)) {
-				vote(chip->div2_cp_disable_votable,
-						TAPER_VOTER, true, 0);
-				/*
-				 * When master CP is disabled, reset all votes
-				 * on ICL to enable Main charger to pump
-				 * charging current.
-				 */
-				if (chip->usb_icl_votable)
-					vote_override(chip->usb_icl_votable,
-						TAPER_MAIN_ICL_LIMIT_VOTER,
-						false, 0);
-=======
 			if (fcc_ua < (chip->div2_cp_min_ilim_ua * 2 + taper_ibat_offset)) {
 				if (chip->fcc_main_votable) {
 					vote_override(chip->fcc_main_votable, CC_MODE_VOTER, false, -22);
@@ -2040,7 +1969,6 @@ static void smb1398_taper_work(struct work_struct *work)
 					rerun_election(chip->fcc_votable);
 				}
 				vote(chip->div2_cp_disable_votable, TAPER_VOTER, true, 0);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 				goto out;
 			}
 			/*
@@ -2174,15 +2102,9 @@ static int smb1398_div2_cp_parse_dt(struct smb1398_chip *chip)
 	chip->max_cutoff_soc = 85;
 	of_property_read_u32(chip->dev->of_node, "qcom,max-cutoff-soc",
 			&chip->max_cutoff_soc);
-<<<<<<< HEAD
-
-	chip->ilim_ua_disable_div2_cp_slave = chip->div2_cp_min_ilim_ua * 3;
-
-=======
 	pr_err("qcom,max-cutoff-soc:%d \n",
                                   chip->max_cutoff_soc);
 	chip->ilim_ua_disable_div2_cp_slave = chip->div2_cp_min_ilim_ua * 3;
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	of_property_read_u32(chip->dev->of_node, "qcom,ilim-ua-disable-slave",
 					&chip->ilim_ua_disable_div2_cp_slave);
 

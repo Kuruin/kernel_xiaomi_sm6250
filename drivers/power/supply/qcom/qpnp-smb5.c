@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1024,13 +1020,10 @@ static enum power_supply_property smb5_usb_props[] = {
 	POWER_SUPPLY_PROP_THERM_ICL_LIMIT,
 	POWER_SUPPLY_PROP_TYPE_RECHECK,
 	POWER_SUPPLY_PROP_SKIN_HEALTH,
-<<<<<<< HEAD
 	POWER_SUPPLY_PROP_APSD_RERUN,
 	POWER_SUPPLY_PROP_APSD_TIMEOUT,
-=======
 	POWER_SUPPLY_PROP_QC3P5_POWER_LIMIT,
 	POWER_SUPPLY_PROP_QC3P5_CURRENT_MAX,
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 };
 
 static int smb5_usb_get_prop(struct power_supply *psy,
@@ -1242,20 +1235,18 @@ static int smb5_usb_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_SKIN_HEALTH:
 		val->intval = smblib_get_skin_temp_status(chg);
 		break;
-<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_APSD_RERUN:
 		val->intval = 0;
 		break;
 	case POWER_SUPPLY_PROP_APSD_TIMEOUT:
 		val->intval = chg->apsd_ext_timeout;
-=======
+		break;
 	case POWER_SUPPLY_PROP_QC3P5_POWER_LIMIT:
 		val->intval = chg->qc3p5_power_limit_w;
 		break;
 	case POWER_SUPPLY_PROP_QC3P5_CURRENT_MAX:
 		val->intval = get_client_vote(chg->usb_icl_votable,
 					QC3P5_VOTER);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		break;
 	default:
 		pr_err("get prop %d is not supported in usb\n", psp);
@@ -1363,15 +1354,13 @@ static int smb5_usb_set_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_ADAPTER_CC_MODE:
 		chg->adapter_cc_mode = val->intval;
 		break;
-<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_APSD_RERUN:
 		del_timer_sync(&chg->apsd_timer);
 		chg->apsd_ext_timeout = false;
 		smblib_rerun_apsd(chg);
-=======
+		break;
 	case POWER_SUPPLY_PROP_QC3P5_CURRENT_MAX:
 		rc = vote(chg->usb_icl_votable, QC3P5_VOTER, true, val->intval);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		break;
 	default:
 		pr_err("set prop %d is not supported\n", psp);
@@ -1391,14 +1380,11 @@ static int smb5_usb_prop_is_writeable(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_THERM_ICL_LIMIT:
 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_LIMIT:
 	case POWER_SUPPLY_PROP_ADAPTER_CC_MODE:
-<<<<<<< HEAD
 	case POWER_SUPPLY_PROP_APSD_RERUN:
-=======
 	case POWER_SUPPLY_PROP_QC3P5_CURRENT_MAX:
 	case POWER_SUPPLY_PROP_PD_AUTHENTICATION:
 	case POWER_SUPPLY_PROP_FASTCHARGE_MODE:
 	case POWER_SUPPLY_PROP_PD_REMOVE_COMPENSATION:
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		return 1;
 	default:
 		break;
@@ -1642,11 +1628,8 @@ static int smb5_usb_main_set_prop(struct power_supply *psy,
 	struct smb5 *chip = power_supply_get_drvdata(psy);
 	struct smb_charger *chg = &chip->chg;
 	union power_supply_propval pval = {0, };
-<<<<<<< HEAD
 	enum power_supply_type real_chg_type = chg->real_charger_type;
-=======
 	int parallel_output_mode = 0;
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	int rc = 0, offset_ua = 0;
 
 	switch (psp) {
@@ -1735,13 +1718,7 @@ static int smb5_usb_main_set_prop(struct power_supply *psy,
 		vote_override(chg->usb_icl_votable, CC_MODE_VOTER,
 				(val->intval < 0)||( chg->cc_un_compliant_detected == true ) ? false : true, val->intval);
 		/* Main ICL updated re-calculate ILIM */
-<<<<<<< HEAD
-		if (real_chg_type == POWER_SUPPLY_TYPE_USB_HVDCP_3 ||
-			real_chg_type == POWER_SUPPLY_TYPE_USB_HVDCP_3P5)
-			rerun_election(chg->fcc_votable);
-=======
 		rerun_election(chg->fcc_votable);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		break;
 	case POWER_SUPPLY_PROP_COMP_CLAMP_LEVEL:
 		rc = smb5_set_prop_comp_clamp_level(chg, val);

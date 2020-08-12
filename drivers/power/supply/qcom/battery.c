@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* Copyright (c) 2017-2020 The Linux Foundation. All rights reserved.
-=======
-/* Copyright (c) 2017-2019 The Linux Foundation. All rights reserved.
  * Copyright (C) 2020 XiaoMi, Inc.
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -208,17 +204,9 @@ static int get_hvdcp3_icl_limit(struct pl_data *chip)
 {
 	int main_icl, target_icl = -EINVAL;
 
-<<<<<<< HEAD
 	if ((chip->charger_type != POWER_SUPPLY_TYPE_USB_HVDCP_3)
 		&& (chip->charger_type != POWER_SUPPLY_TYPE_USB_HVDCP_3P5))
-		return target_icl;
-=======
-	rc = power_supply_get_property(chip->usb_psy,
-				POWER_SUPPLY_PROP_REAL_TYPE, &pval);
-        if ((rc < 0) || ((pval.intval != POWER_SUPPLY_TYPE_USB_HVDCP_3)
-                          && (pval.intval != POWER_SUPPLY_TYPE_USB_HVDCP_3P5)))
 		return target_icl = get_effective_result_locked(chip->usb_icl_votable);
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 
 	/*
 	 * For HVDCP3 adapters, limit max. ILIM as follows:
@@ -292,7 +280,6 @@ static void cp_configure_ilim(struct pl_data *chip, const char *voter, int ilim)
 			vote(chip->cp_ilim_votable, voter, true, pval.intval);
 		else
 			vote(chip->cp_ilim_votable, voter, true, ilim);
-<<<<<<< HEAD
 
 		/*
 		 * Rerun FCC votable to ensure offset for ILIM compensation is
@@ -304,8 +291,6 @@ static void cp_configure_ilim(struct pl_data *chip, const char *voter, int ilim)
 				&& chip->fcc_main_votable)
 			rerun_election(chip->fcc_main_votable);
 
-=======
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 		pl_dbg(chip, PR_PARALLEL,
 			"ILIM: vote: %d voter:%s min_ilim=%d fcc=%d target_icl=%d\n",
 			ilim, voter, pval.intval, fcc, target_icl);

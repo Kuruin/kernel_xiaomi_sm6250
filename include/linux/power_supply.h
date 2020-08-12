@@ -351,13 +351,10 @@ enum power_supply_property {
 	POWER_SUPPLY_PROP_COMP_CLAMP_LEVEL,
 	POWER_SUPPLY_PROP_ADAPTER_CC_MODE,
 	POWER_SUPPLY_PROP_SKIN_HEALTH,
-<<<<<<< HEAD
 	POWER_SUPPLY_PROP_APSD_RERUN,
 	POWER_SUPPLY_PROP_APSD_TIMEOUT,
-=======
 	POWER_SUPPLY_PROP_QC3P5_POWER_LIMIT,
 	POWER_SUPPLY_PROP_QC3P5_CURRENT_MAX,
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	/* Charge pump properties */
 	POWER_SUPPLY_PROP_CP_STATUS1,
 	POWER_SUPPLY_PROP_CP_STATUS2,
@@ -415,11 +412,7 @@ enum power_supply_type {
 	POWER_SUPPLY_TYPE_APPLE_BRICK_ID,	/* Apple Charging Method */
 	POWER_SUPPLY_TYPE_USB_HVDCP,		/* High Voltage DCP */
 	POWER_SUPPLY_TYPE_USB_HVDCP_3,		/* Efficient High Voltage DCP */
-<<<<<<< HEAD
 	POWER_SUPPLY_TYPE_USB_HVDCP_3P5,	/* Efficient High Voltage DCP */
-=======
-	POWER_SUPPLY_TYPE_USB_HVDCP_3P5,	/* Efficient High Voltage DCP 20mV Steps */
->>>>>>> e8807494fdd9... usb, power: import xiaomi changes
 	POWER_SUPPLY_TYPE_WIRELESS,		/* Accessory Charger Adapters */
 	POWER_SUPPLY_TYPE_USB_FLOAT,		/* Floating charger */
 	POWER_SUPPLY_TYPE_BMS,			/* Battery Monitor System */
