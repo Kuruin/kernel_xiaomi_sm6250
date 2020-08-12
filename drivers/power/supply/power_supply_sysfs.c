@@ -46,7 +46,7 @@ static const char * const power_supply_type_text[] = {
 	"USB_PD", "USB_PD_DRP", "BrickID",
 	"USB_HVDCP", "USB_HVDCP_3", "USB_HVDCP_3P5", "Wireless", "USB_FLOAT",
 	"BMS", "Parallel", "Main", "Wipower", "USB_C_UFP", "USB_C_DFP",
-	"Charge_Pump",
+	"Charge_Pump", "Battery Verification",
 };
 
 static const char * const power_supply_status_text[] = {
