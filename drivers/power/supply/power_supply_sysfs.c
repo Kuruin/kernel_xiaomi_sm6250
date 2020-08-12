@@ -118,7 +118,8 @@ static ssize_t power_supply_show_property(struct device *dev,
 		}
 	}
 
-	if (off == POWER_SUPPLY_PROP_DS_STATUS)
+	if (off == POWER_SUPPLY_PROP_ROMID ||
+			off == POWER_SUPPLY_PROP_DS_STATUS)
 		return scnprintf(buf, PAGE_SIZE, "%02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",
 			value.arrayval[0], value.arrayval[1], value.arrayval[2], value.arrayval[3],
 			value.arrayval[4], value.arrayval[5], value.arrayval[6], value.arrayval[7]);
@@ -135,8 +136,7 @@ static ssize_t power_supply_show_property(struct device *dev,
 	dev_err(dev, "reporting property %s %d %d\n",
 		attr->attr.name, off, value.intval);
 
-	if (off == POWER_SUPPLY_PROP_ROMID ||
-			off == POWER_SUPPLY_PROP_STATUS)
+	if (off == POWER_SUPPLY_PROP_STATUS)
 		return sprintf(buf, "%s\n",
 			       power_supply_status_text[value.intval]);
 	else if (off == POWER_SUPPLY_PROP_CHARGE_TYPE)
