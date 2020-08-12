@@ -135,7 +135,8 @@ static ssize_t power_supply_show_property(struct device *dev,
 	dev_err(dev, "reporting property %s %d\n",
 		attr->attr.name, value.intval);
 
-	if (off == POWER_SUPPLY_PROP_STATUS)
+	if (off == POWER_SUPPLY_PROP_ROMID ||
+			off == POWER_SUPPLY_PROP_STATUS)
 		return sprintf(buf, "%s\n",
 			       power_supply_status_text[value.intval]);
 	else if (off == POWER_SUPPLY_PROP_CHARGE_TYPE)
