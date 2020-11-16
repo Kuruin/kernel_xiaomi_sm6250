@@ -4085,7 +4085,6 @@ int smblib_get_prop_usb_voltage_max(struct smb_charger *chg,
 			break;
 		}
 		/* else, fallthrough */
-	case POWER_SUPPLY_TYPE_USB_HVDCP_3P5:
 	case POWER_SUPPLY_TYPE_USB_HVDCP_3:
 	case POWER_SUPPLY_TYPE_USB_HVDCP_3P5:
 		if (chg->chg_param.smb_version == PMI632_SUBTYPE)
@@ -4119,9 +4118,6 @@ static int smblib_estimate_adaptor_voltage(struct smb_charger *chg,
 		step_uv = HVDCP3P5_STEP_UV;
 	case POWER_SUPPLY_TYPE_USB_HVDCP_3:
 		val->intval = MICRO_5V + (step_uv * chg->pulse_cnt);
-		break;
-	case POWER_SUPPLY_TYPE_USB_HVDCP_3P5:
-		val->intval = MICRO_5V + (HVDCP3P5_STEP_UV * chg->pulse_cnt);
 		break;
 	case POWER_SUPPLY_TYPE_USB_PD:
 		/* Take the average of min and max values */
@@ -4690,15 +4686,6 @@ int smblib_get_prop_input_voltage_settled(struct smb_charger *chg,
 			return 0;
 		}
 		val->intval = MICRO_5V + step_uv * pulses;
-		break;
-	case POWER_SUPPLY_TYPE_USB_HVDCP_3P5:
-		rc = smblib_get_pulse_cnt(chg, &pulses);
-		if (rc < 0) {
-			smblib_err(chg,
-				"Couldn't read QC_PULSE_COUNT rc=%d\n", rc);
-			return 0;
-		}
-		val->intval = MICRO_5V + HVDCP3P5_STEP_UV * pulses;
 		break;
 	case POWER_SUPPLY_TYPE_USB_PD:
 		val->intval = chg->voltage_min_uv;
