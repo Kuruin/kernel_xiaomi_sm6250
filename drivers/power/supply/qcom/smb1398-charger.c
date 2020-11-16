@@ -365,6 +365,8 @@ struct smb1398_chip {
 	bool			slave_en;
 	bool			in_suspend;
 	bool			disabled;
+	bool			six_pin_batt;
+	bool			qc3p5_ffc_batt;
 };
 
 static int smb1398_read(struct smb1398_chip *chip, u16 reg, u8 *val)
@@ -463,23 +465,6 @@ static int smb1398_set_iin_ma(struct smb1398_chip *chip, int iin_ma)
 		return rc;
 
 	dev_dbg(chip->dev, "set iin_ma = %dmA\n", iin_ma);
-	return rc;
-}
-
-static int smb1398_div2_cp_switcher_en(struct smb1398_chip *chip, bool en)
-{
-	int rc;
-
-	rc = smb1398_masked_write(chip, MISC_SL_SWITCH_EN_REG,
-			EN_SWITCHER, en ? EN_SWITCHER : 0);
-	if (rc < 0) {
-		dev_err(chip->dev, "write SWITCH_EN_REG failed, rc=%d\n", rc);
-		return rc;
-	}
-
-	chip->switcher_en = en;
-
-	dev_dbg(chip->dev, "%s switcher\n", en ? "enable" : "disable");
 	return rc;
 }
 
@@ -1692,7 +1677,7 @@ static int smb1398_request_interrupts(struct smb1398_chip *chip)
 
 static void smb1398_configure_ilim(struct smb1398_chip *chip, int mode)
 {
-	int rc;
+	int rc, ilim_ua;
 	union power_supply_propval pval = {0, };
 
 	/* PPS adapter reply on the current advertised by the adapter */
@@ -1751,7 +1736,7 @@ static void smb1398_status_change_work(struct work_struct *work)
 	struct smb1398_chip *chip = container_of(work,
 			struct smb1398_chip, status_change_work);
 	union power_supply_propval pval = {0};
-	int rc, ilim_ua;
+	int rc;
 	int curr_vfloat_uv, vfloat_thr_uv, fast_charge_mode = 0;
 	static int trigger_taper_count = 0;
 
