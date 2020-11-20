@@ -1818,11 +1818,6 @@ int smblib_get_irq_status(struct smb_charger *chg,
 	int rc;
 	u8 reg;
 
-	if (chg->wa_flags & SKIP_MISC_PBS_IRQ_WA) {
-		val->intval = 0;
-		return 0;
-	}
-
 	mutex_lock(&chg->irq_status_lock);
 	/* Report and clear cached status */
 	val->intval = chg->irq_status;
@@ -2329,18 +2324,6 @@ int smblib_get_prop_batt_status(struct smb_charger *chg,
 	bool usb_online;
 	u8 stat;
 	int rc, suspend = 0;
-
-	if (chg->fake_chg_status_on_debug_batt) {
-		rc = smblib_get_prop_from_bms(chg,
-				POWER_SUPPLY_PROP_DEBUG_BATTERY, &pval);
-		if (rc < 0) {
-			pr_err_ratelimited("Couldn't get debug battery prop rc=%d\n",
-					rc);
-		} else if (pval.intval == 1) {
-			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-			return 0;
-		}
-	}
 
 	if (chg->dbc_usbov) {
 		rc = smblib_get_prop_usb_present(chg, &pval);
@@ -4232,7 +4215,7 @@ int smblib_get_prop_usb_voltage_now(struct smb_charger *chg,
 	 * voltages.
 	 */
 	if (chg->chg_param.smb_version == PM8150B_SUBTYPE && pval.intval)
-		rc = smblib_read_mid_voltage_chan(chg, val);
+		return smblib_read_mid_voltage_chan(chg, val);
 	else
 		rc = smblib_read_usbin_voltage_chan(chg, val);
 	if (rc < 0) {
