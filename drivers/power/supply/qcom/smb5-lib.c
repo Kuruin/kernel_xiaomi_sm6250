@@ -6803,42 +6803,40 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 	apsd_result = smblib_get_apsd_result(chg);
 
 	/* for QC3, switch to CP if present */
-	if ((apsd_result->bit & QC_3P0_BIT)
-			|| (apsd_result->pst
-				== POWER_SUPPLY_TYPE_USB_HVDCP_3P5)) {
-		if (chg->sec_cp_present) {
-			if (apsd_result->pst
-					== POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
-				rc = smblib_select_sec_charger(chg,
-						POWER_SUPPLY_CHARGER_SEC_CP,
-						POWER_SUPPLY_CP_HVDCP3P5, false);
-				if (rc < 0)
-					dev_err(chg->dev,
-							"HVDCP3P5: Couldn't enable secondary chargers  rc=%d\n", rc);
-				smblib_usb_pd_adapter_allowance_override(chg, CONTINUOUS);
-			} else if (!chg->qc_class_ab) {
-				rc = smblib_select_sec_charger(chg, POWER_SUPPLY_CHARGER_SEC_CP,
-							POWER_SUPPLY_CP_HVDCP3, false);
-				if (rc < 0)
-					dev_err(chg->dev,
-						"HVDCP3: Couldn't enable secondary chargers  rc=%d\n", rc);
-			} else {
-				if (!chg->detect_low_power_qc3_charger) {
-					vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
-							HVDCP_START_CURRENT_UA);
-					schedule_delayed_work(&chg->raise_qc3_vbus_work, 0);
-					chg->detect_low_power_qc3_charger = true;
-				}
-			}
-			/* start six pin battery step charge monitor work */
-			if (chg->six_pin_step_charge_enable) {
-				if (!chg->already_start_step_charge_work) {
-					schedule_delayed_work(&chg->six_pin_batt_step_chg_work,
-							msecs_to_jiffies(STEP_CHG_DELAYED_START_MS));
-					chg->already_start_step_charge_work = true;
-				}
+	if (((apsd_result->bit & QC_3P0_BIT)
+			|| (apsd_result->pst == POWER_SUPPLY_TYPE_USB_HVDCP_3P5))
+		&& (chg->sec_cp_present)) {
+		if (apsd_result->pst == POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
+			rc = smblib_select_sec_charger(chg,
+					POWER_SUPPLY_CHARGER_SEC_CP,
+					POWER_SUPPLY_CP_HVDCP3P5, false);
+			if (rc < 0)
+				dev_err(chg->dev,
+						"HVDCP3P5: Couldn't enable secondary chargers  rc=%d\n", rc);
+			smblib_usb_pd_adapter_allowance_override(chg, CONTINUOUS);
+		} else if (!chg->qc_class_ab) {
+			rc = smblib_select_sec_charger(chg, POWER_SUPPLY_CHARGER_SEC_CP,
+						POWER_SUPPLY_CP_HVDCP3, false);
+			if (rc < 0)
+				dev_err(chg->dev,
+					"HVDCP3: Couldn't enable secondary chargers  rc=%d\n", rc);
+		} else {
+			if (!chg->detect_low_power_qc3_charger) {
+				vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
+						HVDCP_START_CURRENT_UA);
+				schedule_delayed_work(&chg->raise_qc3_vbus_work, 0);
+				chg->detect_low_power_qc3_charger = true;
 			}
 		}
+		/* start six pin battery step charge monitor work */
+		if (chg->six_pin_step_charge_enable) {
+			if (!chg->already_start_step_charge_work) {
+				schedule_delayed_work(&chg->six_pin_batt_step_chg_work,
+						msecs_to_jiffies(STEP_CHG_DELAYED_START_MS));
+				chg->already_start_step_charge_work = true;
+			}
+		}
+
 		/* QC3.5 detection timeout */
 		if (!chg->apsd_ext_timeout &&
 				!timer_pending(&chg->apsd_timer)) {
@@ -6850,12 +6848,14 @@ static void smblib_handle_hvdcp_3p0_auth_done(struct smb_charger *chg,
 				msecs_to_jiffies(APSD_EXTENDED_TIMEOUT_MS)
 				+ jiffies);
 		}
+
 	} else if ((apsd_result->bit & QC_2P0_BIT)
 			&& (!chg->qc2_unsupported)) {
 		pr_info("force 9V for QC2 charger\n");
 		rc = smblib_force_vbus_voltage(chg, FORCE_9V_BIT);
 		if (rc < 0)
 			pr_err("Failed to force 9V\n");
+
 		vote(chg->usb_icl_votable, SW_ICL_MAX_VOTER, true,
 				HVDCP2_CURRENT_UA);
 	}
