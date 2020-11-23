@@ -417,6 +417,7 @@
 #define BTN_WHEEL		0x150
 #define BTN_GEAR_DOWN		0x150
 #define BTN_GEAR_UP		0x151
+#define BTN_INFO		0x152
 
 #define KEY_OK			0x160
 #define KEY_SELECT		0x161
@@ -805,6 +806,7 @@
 #define SW_HPHR_OVERCURRENT	0x11  /* set = over current on right hph */
 #define SW_MICROPHONE2_INSERT	0x12  /* set = inserted */
 #define SW_UNSUPPORT_INSERT	0x13  /* set = unsupported device inserted */
+#define SW_MACHINE_COVER	0x14  /* set = cover closed */
 #define SW_MAX			0x20
 #define SW_CNT			(SW_MAX+1)
 
