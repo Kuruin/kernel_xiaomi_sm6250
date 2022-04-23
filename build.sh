@@ -19,6 +19,10 @@ exit 1
 fi
 fi
 
+# KBUILD HOST and USER
+export KBUILD_BUILD_HOST=MacOS
+export KBUILD_BUILD_USER="Kuruin"
+
 # Speed up build process
 MAKE="./makeparallel"
 
